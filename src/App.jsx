@@ -19,7 +19,7 @@ function App() {
     <div>
       <h1>My Todos</h1>
       <TodoForm onAddTodo={addTodo} />
-      <TodoList/>
+      <TodoList todoList={todoList}/>
     </div>
   )
 }
