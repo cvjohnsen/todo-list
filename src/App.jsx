@@ -5,7 +5,7 @@ import { useState } from 'react'
 
 function App() {
 
-  const [todoList, setTodoList] = useState([])
+  const [todoList, setTodoList] = useState([]);
   
   function addTodo(title) {
     const newTodo = {
@@ -19,9 +19,9 @@ function App() {
     <div>
       <h1>My Todos</h1>
       <TodoForm onAddTodo={addTodo} />
-      <TodoList todoList={todoList}/>
+      <TodoList todoList={todoList} />    
     </div>
-  )
+  );
 }
 
 export default App
