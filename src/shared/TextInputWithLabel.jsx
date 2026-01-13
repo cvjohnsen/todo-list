@@ -1,13 +1,14 @@
 function TextInputWithLabel({
     elementId,
-    label,
+    labelText,
     onChange,
     ref,
     value,
 }) {
   return (
     <>
-      <label htmlFor={elementId}>{label}</label>
+    {/* per AI Reviwer tool update labelText for prop name */}
+      <label htmlFor={elementId}>{labelText}</label>
       <input 
         type="text"
         id={elementId}
