@@ -28,7 +28,7 @@ function App() {
       const resp = await fetch(url, options);
 
       if (!resp.ok) {
-        throw new Error(resp.message);
+        throw new Error("Failed to fetch todos.");
       }
       
     const { records } = await resp.json();
@@ -129,11 +129,18 @@ function updateTodo(editedTodo) {
   return (
     <div>
       <h1>My Todos</h1>
-      {errorMessage && <p>{errorMessage}</p>}
-
+    
       <TodoForm onAddTodo={addTodo} isSaving={isSaving} />
-      <TodoList todoList={todoList} onCompleteTodo={completeTodo} onUpdateTodo={updateTodo} isLoading={isLoading}/>    
-    </div>
+      <TodoList todoList={todoList} onCompleteTodo={completeTodo} onUpdateTodo={updateTodo} isLoading={isLoading}/>  
+
+      {errorMessage && (
+  <div>
+    <hr />
+    <p>{errorMessage}</p>
+    <button onClick={() => setErrorMessage("")}>Dismiss</button>
+  </div>
+)}  
+    </div>  
   );
 }
 
