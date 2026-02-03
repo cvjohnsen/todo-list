@@ -30,13 +30,28 @@ function App() {
       if (!resp.ok) {
         throw new Error(resp.message);
       }
+      
+    const { records } = await resp.json();
 
+    const fetchedTodos = records.map((record) => {
+    const todo = {
+      id: record.id,
+      ...record.fields,
+    };
+
+  if (!todo.isCompleted) {
+    todo.isCompleted = false;
+  }
+
+    return todo;
+  });
+
+  setTodoList([...fetchedTodos]);
     } catch (error) {
- 
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
+  setErrorMessage(error.message);
+} finally {
+  setIsLoading(false);
+}
   };
 
   fetchTodos();
@@ -74,6 +89,9 @@ function updateTodo(editedTodo) {
   return (
     <div>
       <h1>My Todos</h1>
+      {isLoading && <p>Loading todos...</p>}
+      {errorMessage && <p>{errorMessage}</p>}
+
       <TodoForm onAddTodo={addTodo} />
       <TodoList todoList={todoList} onCompleteTodo={completeTodo} onUpdateTodo={updateTodo} />    
     </div>
