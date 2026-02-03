@@ -89,11 +89,10 @@ function updateTodo(editedTodo) {
   return (
     <div>
       <h1>My Todos</h1>
-      {isLoading && <p>Loading todos...</p>}
       {errorMessage && <p>{errorMessage}</p>}
 
       <TodoForm onAddTodo={addTodo} />
-      <TodoList todoList={todoList} onCompleteTodo={completeTodo} onUpdateTodo={updateTodo} />    
+      <TodoList todoList={todoList} onCompleteTodo={completeTodo} onUpdateTodo={updateTodo} isLoading={isLoading}/>    
     </div>
   );
 }
