@@ -6,6 +6,9 @@ import { useState } from 'react'
 function App() {
 
   const [todoList, setTodoList] = useState([]);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   
   function addTodo(title) {
     const newTodo = {
