@@ -57,14 +57,17 @@ function App() {
   fetchTodos();
 }, []);
   
-async function addTodo(title) {
-  setIsSaving(true);
-
-  const newTodoFields = {
-    title: title,
-    isCompleted: false,
+const addTodo = async (newTodo) => {
+  const payload = {
+    records: [
+      {
+        fields: {
+          title: newTodo.title,
+          isCompleted: newTodo.isCompleted,
+        },
+      },
+    ],
   };
-  
 
   const options = {
     method: "POST",
@@ -72,33 +75,41 @@ async function addTodo(title) {
       Authorization: token,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      fields: newTodoFields,
-    }),
+    body: JSON.stringify(payload),
   };
 
-  try {
+   try {
+    setIsSaving(true);
+
     const resp = await fetch(url, options);
 
     if (!resp.ok) {
       throw new Error("Failed to save todo.");
     }
 
-    const { id, fields } = await resp.json();
+    const { records } = await resp.json();
 
     const savedTodo = {
-      id,
-      ...fields,
-      isCompleted: fields.isCompleted ?? false,
+      id: records[0].id,
+      ...records[0].fields,
     };
 
-    setTodoList((prev) => [...prev, savedTodo]);
+    if (!records[0].fields.isCompleted) {
+      savedTodo.isCompleted = false;
+    }
+
+    setTodoList([...todoList, savedTodo]);
   } catch (error) {
+   
+    console.log(error);
+
     setErrorMessage(error.message);
   } finally {
+    
     setIsSaving(false);
   }
-}
+};
+
 function completeTodo(id) {
     const updateTodos = todoList.map((todo) => {
       if (todo.id === id) return { ...todo, isCompleted: true };
@@ -114,7 +125,7 @@ function updateTodo(editedTodo) {
     });
     setTodoList(updatedTodos);
   }
-  
+
   return (
     <div>
       <h1>My Todos</h1>
