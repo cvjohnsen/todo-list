@@ -9,9 +9,9 @@ const token = `Bearer ${import.meta.env.VITE_PAT}`;
 function App() {
 
   const [todoList, setTodoList] = useState([]);
-
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
   const fetchTodos = async () => {
@@ -57,41 +57,70 @@ function App() {
   fetchTodos();
 }, []);
   
-  function addTodo(title) {
-    const newTodo = {
-      title:title,
-      id: Date.now(),
-      isCompleted: false,
+async function addTodo(title) {
+  setIsSaving(true);
+
+  const newTodoFields = {
+    title: title,
+    isCompleted: false,
+  };
+  
+
+  const options = {
+    method: "POST",
+    headers: {
+      Authorization: token,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      fields: newTodoFields,
+    }),
+  };
+
+  try {
+    const resp = await fetch(url, options);
+
+    if (!resp.ok) {
+      throw new Error("Failed to save todo.");
+    }
+
+    const { id, fields } = await resp.json();
+
+    const savedTodo = {
+      id,
+      ...fields,
+      isCompleted: fields.isCompleted ?? false,
     };
 
-    setTodoList([...todoList, newTodo]);
+    setTodoList((prev) => [...prev, savedTodo]);
+  } catch (error) {
+    setErrorMessage(error.message);
+  } finally {
+    setIsSaving(false);
   }
+}
 function completeTodo(id) {
-  const updateTodos = todoList.map ((todo) => {
-    if (todo.id ===id) {
-      return {...todo, isCompleted: true};
-    }
-    return todo;
-  })
-  setTodoList(updateTodos);
-}
+    const updateTodos = todoList.map((todo) => {
+      if (todo.id === id) return { ...todo, isCompleted: true };
+      return todo;
+    });
+    setTodoList(updateTodos);
+  }
+
 function updateTodo(editedTodo) {
-  const updatedTodos = todoList.map((todo) => {
-    if (todo.id === editedTodo.id) {
-      return { ...editedTodo };
-    }
-    return todo;
-  });
-
-  setTodoList(updatedTodos);
-}
-
+    const updatedTodos = todoList.map((todo) => {
+      if (todo.id === editedTodo.id) return { ...editedTodo };
+      return todo;
+    });
+    setTodoList(updatedTodos);
+  }
+  
   return (
     <div>
       <h1>My Todos</h1>
       {errorMessage && <p>{errorMessage}</p>}
 
-      <TodoForm onAddTodo={addTodo} />
+      <TodoForm onAddTodo={addTodo} isSaving={isSaving} />
       <TodoList todoList={todoList} onCompleteTodo={completeTodo} onUpdateTodo={updateTodo} isLoading={isLoading}/>    
     </div>
   );
