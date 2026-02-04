@@ -2,7 +2,7 @@ import './App.css'
 import TodoList from "./features/TodoList/TodoList";
 import TodoForm from "./features/TodoForm";
 import { useEffect, useState } from 'react'
-import TodosViewForm from "./features/TodosViewForm.jsx";
+import TodosViewForm from "./features/TodosViewForm";
 
 const url = `https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
 const token = `Bearer ${import.meta.env.VITE_PAT}`;
@@ -91,7 +91,7 @@ const addTodo = async (newTodo) => {
     setIsSaving(true);
     setErrorMessage("");
 
-    const resp = await fetch(encodeUrl({ sortField, sortDirection }), options)
+    const resp = await fetch(url, options);
 
     if (!resp.ok) {
       throw new Error("Failed to save todo.");
@@ -153,7 +153,7 @@ const completeTodo = async (id) => {
     setIsSaving(true);
     setErrorMessage("");
 
-    const resp = await fetch(encodeUrl({ sortField, sortDirection }), options)
+    const resp = await fetch(url, options);
     if (!resp.ok) {
       throw new Error("Failed to complete todo");
     }
@@ -205,7 +205,7 @@ const updateTodo = async (editedTodo) => {
     setIsSaving(true);
     setErrorMessage("");
 
-    const resp = await fetch(encodeUrl({ sortField, sortDirection }), options)
+    const resp = await fetch(url, options);
     if (!resp.ok) {
       throw new Error("Failed to update todo");
     }
