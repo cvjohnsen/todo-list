@@ -6,14 +6,17 @@ import TodosViewForm from "./features/TodosViewForm";
 
 const url = `https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
 const token = `Bearer ${import.meta.env.VITE_PAT}`;
-const encodeUrl = ({ sortField, sortDirection }) => {
+const encodeUrl = ({ sortField, sortDirection, queryString }) => {
   let sortQuery = `sort[0][field]=${sortField}&sort[0][direction]=${sortDirection}`;
   let searchQuery = "";
+
   if (queryString) {
-    searchQuery = `&filterByFormula=SEARCH("${queryString}",+title)`;
+    searchQuery = `&filterByFormula=SEARCH("${queryString}", {title})`;
   }
-  return encodeURI(`${url}?${sortQuery}`);
+
+  return encodeURI(`${url}?${sortQuery}${searchQuery}`);
 };
+
 
 
 function App() {
@@ -96,7 +99,7 @@ const addTodo = async (newTodo) => {
     setIsSaving(true);
     setErrorMessage("");
 
-    const resp = await fetch(url, options);
+    const resp = await fetch(encodeUrl({ sortField, sortDirection, queryString }), options);
 
     if (!resp.ok) {
       throw new Error("Failed to save todo.");
@@ -158,7 +161,7 @@ const completeTodo = async (id) => {
     setIsSaving(true);
     setErrorMessage("");
 
-    const resp = await fetch(url, options);
+    const resp = await fetch(encodeUrl({ sortField, sortDirection, queryString }), options);
     if (!resp.ok) {
       throw new Error("Failed to complete todo");
     }
@@ -210,7 +213,7 @@ const updateTodo = async (editedTodo) => {
     setIsSaving(true);
     setErrorMessage("");
 
-    const resp = await fetch(url, options);
+    const resp = await fetch(encodeUrl({ sortField, sortDirection, queryString }), options);
     if (!resp.ok) {
       throw new Error("Failed to update todo");
     }
@@ -231,10 +234,27 @@ const updateTodo = async (editedTodo) => {
     <div>
       <h1>My Todos</h1>
     
-      <TodoForm onAddTodo={addTodo} isSaving={isSaving} />
-      <TodoList todoList={todoList} onCompleteTodo={completeTodo} onUpdateTodo={updateTodo} isLoading={isLoading}/>  
+      <TodoForm 
+        onAddTodo={addTodo} 
+        isSaving={isSaving} 
+        />
+
+      <TodoList 
+        todoList={todoList} 
+        onCompleteTodo={completeTodo} 
+        onUpdateTodo={updateTodo} 
+        isLoading={isLoading}
+        />  
     <hr />
-      <TodosViewForm sortDirection={sortDirection} setSortDirection={setSortDirection} sortField={sortField} setSortField={setSortField} />
+      <TodosViewForm 
+        sortDirection={sortDirection} 
+        setSortDirection={setSortDirection} 
+        sortField={sortField} 
+        setSortField={setSortField} 
+        queryString={queryString}
+        setQueryString={setQueryString}
+        />
+
       {errorMessage && (
   <div>
     <hr />
