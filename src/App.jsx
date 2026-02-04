@@ -5,6 +5,11 @@ import { useEffect, useState } from 'react'
 
 const url = `https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
 const token = `Bearer ${import.meta.env.VITE_PAT}`;
+const encodeUrl = ({ sortField, sortDirection }) => {
+const sortQuery = `sort[0][field]=${sortField}&sort[0][direction]=${sortDirection}`;
+  return encodeURI(`${url}?${sortQuery}`);
+};
+
 
 function App() {
 
@@ -12,10 +17,13 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [sortField, setSortField] = useState("createdTime");
+  const [sortDirection, setSortDirection] = useState("desc");
 
   useEffect(() => {
   const fetchTodos = async () => {
     setIsLoading(true);
+    setErrorMessage("");
 
     const options = {
       method: "GET",
@@ -25,7 +33,7 @@ function App() {
     };
 
     try {
-      const resp = await fetch(url, options);
+      const resp = await fetch(encodeUrl({ sortField, sortDirection }), options)
 
       if (!resp.ok) {
         throw new Error("Failed to fetch todos.");
@@ -39,9 +47,9 @@ function App() {
       ...record.fields,
     };
 
-  if (!todo.isCompleted) {
-    todo.isCompleted = false;
-  }
+  if (todo.isCompleted === undefined) {
+  todo.isCompleted = false;
+}
 
     return todo;
   });
@@ -55,7 +63,7 @@ function App() {
   };
 
   fetchTodos();
-}, []);
+}, [sortField, sortDirection]);
   
 const addTodo = async (newTodo) => {
   const payload = {
@@ -80,8 +88,9 @@ const addTodo = async (newTodo) => {
 
    try {
     setIsSaving(true);
+    setErrorMessage("");
 
-    const resp = await fetch(url, options);
+    const resp = await fetch(encodeUrl({ sortField, sortDirection }), options)
 
     if (!resp.ok) {
       throw new Error("Failed to save todo.");
@@ -94,11 +103,12 @@ const addTodo = async (newTodo) => {
       ...records[0].fields,
     };
 
-    if (!records[0].fields.isCompleted) {
-      savedTodo.isCompleted = false;
+    if (records[0].fields.isCompleted === undefined) {
+    savedTodo.isCompleted = false;
     }
 
-    setTodoList([...todoList, savedTodo]);
+
+    setTodoList((prev) => [...prev, savedTodo]);
   } catch (error) {
    
     console.log(error);
@@ -140,8 +150,9 @@ const completeTodo = async (id) => {
 
   try {
     setIsSaving(true);
+    setErrorMessage("");
 
-    const resp = await fetch(url, options);
+    const resp = await fetch(encodeUrl({ sortField, sortDirection }), options)
     if (!resp.ok) {
       throw new Error("Failed to complete todo");
     }
@@ -191,8 +202,9 @@ const updateTodo = async (editedTodo) => {
 
   try {
     setIsSaving(true);
+    setErrorMessage("");
 
-    const resp = await fetch(url, options);
+    const resp = await fetch(encodeUrl({ sortField, sortDirection }), options)
     if (!resp.ok) {
       throw new Error("Failed to update todo");
     }
