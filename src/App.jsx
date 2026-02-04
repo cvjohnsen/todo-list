@@ -104,7 +104,7 @@ const addTodo = async (newTodo) => {
     };
 
     if (records[0].fields.isCompleted === undefined) {
-    savedTodo.isCompleted = false;
+      savedTodo.isCompleted = false;
     }
 
 
