@@ -1,24 +1,12 @@
 import './App.css'
 import TodoList from "./features/TodoList/TodoList";
 import TodoForm from "./features/TodoForm";
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import TodosViewForm from "./features/TodosViewForm";
 
 const url = `https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
 const token = `Bearer ${import.meta.env.VITE_PAT}`;
-const encodeUrl = ({ sortField, sortDirection, queryString }) => {
-  let sortQuery = `sort[0][field]=${sortField}&sort[0][direction]=${sortDirection}`;
-  let searchQuery = "";
-
-  if (queryString) {
-    searchQuery = `&filterByFormula=SEARCH("${queryString}", {title})`;
-  }
-
-  return encodeURI(`${url}?${sortQuery}${searchQuery}`);
-};
-
-
-
+  
 function App() {
 
   const [todoList, setTodoList] = useState([]);
@@ -28,6 +16,17 @@ function App() {
   const [sortField, setSortField] = useState("createdTime");
   const [sortDirection, setSortDirection] = useState("desc");
   const [queryString, setQueryString] = useState("");
+
+  const encodeUrl = useCallback(() => {
+    const sortQuery = `sort[0][field]=${sortField}&sort[0][direction]=${sortDirection}`;
+
+    let searchQuery = "";
+    if (queryString) {
+      searchQuery = `&filterByFormula=SEARCH("${queryString}", {title})`;
+    }
+
+    return encodeURI(`${url}?${sortQuery}${searchQuery}`);
+  }, [sortField, sortDirection, queryString]);
 
   useEffect(() => {
   const fetchTodos = async () => {
@@ -42,7 +41,7 @@ function App() {
     };
 
     try {
-      const resp = await fetch(encodeUrl({ sortField, sortDirection, queryString }), options)
+      const resp = await fetch(encodeUrl(), options);
 
       if (!resp.ok) {
         throw new Error("Failed to fetch todos.");
@@ -50,8 +49,8 @@ function App() {
       
     const { records } = await resp.json();
 
-    const fetchedTodos = records.map((record) => {
-    const todo = {
+    const fetchedTodos = records.map((record) => {    
+      const todo = {
       id: record.id,
       ...record.fields,
     };
@@ -72,7 +71,7 @@ function App() {
   };
 
   fetchTodos();
-}, [sortField, sortDirection, queryString]);
+}, [encodeUrl]);
   
 const addTodo = async (newTodo) => {
   const payload = {
@@ -99,7 +98,7 @@ const addTodo = async (newTodo) => {
     setIsSaving(true);
     setErrorMessage("");
 
-    const resp = await fetch(encodeUrl({ sortField, sortDirection, queryString }), options);
+    const resp = await fetch(url, options);
 
     if (!resp.ok) {
       throw new Error("Failed to save todo.");
@@ -161,7 +160,7 @@ const completeTodo = async (id) => {
     setIsSaving(true);
     setErrorMessage("");
 
-    const resp = await fetch(encodeUrl({ sortField, sortDirection, queryString }), options);
+    const resp = await fetch(url, options);
     if (!resp.ok) {
       throw new Error("Failed to complete todo");
     }
@@ -213,7 +212,7 @@ const updateTodo = async (editedTodo) => {
     setIsSaving(true);
     setErrorMessage("");
 
-    const resp = await fetch(encodeUrl({ sortField, sortDirection, queryString }), options);
+    const resp = await fetch(url, options);
     if (!resp.ok) {
       throw new Error("Failed to update todo");
     }
