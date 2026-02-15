@@ -1,0 +1,16 @@
+.appContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.appInner {
+  width: 100%;
+  max-width: 700px;
+}
+
+.errorBox {
+  border: 2px solid #ec4899;
+  padding: 1rem;
+  margin-top: 1rem;
+  background-color: #fff0f6;
+}
