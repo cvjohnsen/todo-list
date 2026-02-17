@@ -8,7 +8,7 @@ function TodoListItem({ todo, onCompleteTodo, onUpdateTodo }) {
 
   useEffect(() => {
     setWorkingTitle(todo.title);
-  }, [todo]);
+  }, [todo.title]);
 
   function handleCancel() {
     setWorkingTitle(todo.title);
