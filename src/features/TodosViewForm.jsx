@@ -1,5 +1,19 @@
 import { useEffect, useState } from "react";
+import styled from "styled-components";
 
+ const StyledForm = styled.form`
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+    `;
+
+    const StyledSection = styled.div`
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    `;
+   
 function TodosViewForm({
   sortDirection,
   setSortDirection,
@@ -25,9 +39,9 @@ function TodosViewForm({
   }, [localQueryString, setQueryString]);
 
   return (
-    <form onSubmit={preventRefresh}>
+    <StyledForm onSubmit={preventRefresh}>
 
-      <div>
+     <StyledSection>
         <label htmlFor="searchTodos">Search todos:</label>
         <input
           id="searchTodos"
@@ -38,9 +52,9 @@ function TodosViewForm({
         <button type="button" onClick={() => setLocalQueryString("")}>
           Clear
         </button>
-      </div>
+     </StyledSection>
 
-      <div>
+      <StyledSection>
         <label htmlFor="sortField">Sort by</label>
         <select
           id="sortField"
@@ -60,8 +74,8 @@ function TodosViewForm({
           <option value="asc">Ascending</option>
           <option value="desc">Descending</option>
         </select>
-      </div>
-    </form>
+      </StyledSection>
+    </StyledForm>
   );
 }
 

@@ -3,6 +3,7 @@ import TodoList from "./features/TodoList/TodoList";
 import TodoForm from "./features/TodoForm";
 import { useCallback, useEffect, useState } from 'react'
 import TodosViewForm from "./features/TodosViewForm";
+import styles from './App.module.css';
 
 const url = `https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
 const token = `Bearer ${import.meta.env.VITE_PAT}`;
@@ -230,7 +231,8 @@ const updateTodo = async (editedTodo) => {
 };
 
   return (
-    <div>
+  <div className={styles.appContainer}>
+    <div className={styles.appInner}>
       <h1>My Todos</h1>
     
       <TodoForm 
@@ -255,13 +257,14 @@ const updateTodo = async (editedTodo) => {
         />
 
       {errorMessage && (
-  <div>
-    <hr />
-    <p>{errorMessage}</p>
-    <button onClick={() => setErrorMessage("")}>Dismiss</button>
+      <div className={styles.errorBox}>
+        <hr />
+        <p>{errorMessage}</p>
+        <button onClick={() => setErrorMessage("")}>Dismiss</button>
+      </div>
+    )}
+    </div>
   </div>
-)}  
-    </div>  
   );
 }
 
