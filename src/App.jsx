@@ -4,6 +4,8 @@ import TodoForm from "./features/TodoForm";
 import { useCallback, useEffect, useState } from 'react'
 import TodosViewForm from "./features/TodosViewForm";
 import styles from './App.module.css';
+import { useReducer } from 'react';
+
 
 const url = `https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
 const token = `Bearer ${import.meta.env.VITE_PAT}`;
@@ -17,6 +19,7 @@ function App() {
   const [sortField, setSortField] = useState("createdTime");
   const [sortDirection, setSortDirection] = useState("desc");
   const [queryString, setQueryString] = useState("");
+  const [state, dispatch] = useReducer(todosReducer, initialState);
 
   const encodeUrl = useCallback(() => {
     const sortQuery = `sort[0][field]=${sortField}&sort[0][direction]=${sortDirection}`;
