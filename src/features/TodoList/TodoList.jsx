@@ -18,13 +18,15 @@ function TodoList({ todoList, onCompleteTodo, onUpdateTodo, isLoading }) {
       const totalPages = Math.max(1, Math.ceil(filteredTodoList.length / itemsPerPage));
 
       useEffect(() => {
-  const isInvalidPage =
-    isNaN(currentPage) ||
-    currentPage < 1 ||
-    currentPage > totalPages;
+  if (totalPages > 0) {
+    const isInvalidPage =
+      isNaN(currentPage) ||
+      currentPage < 1 ||
+      currentPage > totalPages;
 
-  if (isInvalidPage) {
-    navigate("/");
+    if (isInvalidPage) {
+      navigate("/");
+    }
   }
 }, [currentPage, totalPages, navigate]);
       
