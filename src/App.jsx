@@ -4,6 +4,8 @@ import { useCallback, useEffect, useReducer, useState } from "react";
 import { useLocation, Routes, Route } from "react-router-dom";
 import Header from "./shared/Header";
 import TodosPage from "./pages/TodosPage";
+import About from "./pages/About";
+import NotFound from "./pages/NotFound";
 import {
   todosReducer as reducer,
   actions as todoActions,
@@ -233,9 +235,8 @@ const updateTodo = async (editedTodo) => {
           }
         />
 
-        <Route path="/about" element={<h1>About</h1>} />
-
-        <Route path="*" element={<h1>Not Found</h1>} />
+        <Route path="/about" element={<About />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
   </div>
