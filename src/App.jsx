@@ -1,10 +1,12 @@
-import './App.css'
-import TodoList from "./features/TodoList/TodoList";
-import TodoForm from "./features/TodoForm";
-import TodosViewForm from "./features/TodosViewForm";
-import styles from './App.module.css';
+import "./App.css";
+import styles from "./App.module.css";
 import { useCallback, useEffect, useReducer, useState } from "react";
-import {todosReducer as reducer, actions as todoActions, initialState as initialTodosState,} from "./reducers/todos.reducer";
+import TodosPage from "./pages/TodosPage";
+import {
+  todosReducer as reducer,
+  actions as todoActions,
+  initialState as initialTodosState,
+} from "./reducers/todos.reducer";
 
 
 const url = `https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
@@ -13,7 +15,7 @@ const token = `Bearer ${import.meta.env.VITE_PAT}`;
 function App() {
 
   const [todoState, dispatch] = useReducer(reducer,initialTodosState);
-  const { todoList, isLoading, isSaving, errorMessage } = todoState;
+  const {todoList } = todoState;
   const [sortField, setSortField] = useState("createdTime");
   const [sortDirection, setSortDirection] = useState("desc");
   const [queryString, setQueryString] = useState("");
@@ -201,38 +203,22 @@ const updateTodo = async (editedTodo) => {
   <div className={styles.appContainer}>
     <div className={styles.appInner}>
       <h1>My Todos</h1>
-    
-      <TodoForm 
-        onAddTodo={addTodo} 
-        isSaving={isSaving} 
-        />
 
-      <TodoList 
-        todoList={todoList} 
-        onCompleteTodo={completeTodo} 
-        onUpdateTodo={updateTodo} 
-        isLoading={isLoading}
-        />  
-    <hr />
-      <TodosViewForm 
-        sortDirection={sortDirection} 
-        setSortDirection={setSortDirection} 
-        sortField={sortField} 
-        setSortField={setSortField} 
+      <TodosPage
+        todoState={todoState}
+        addTodo={addTodo}
+        completeTodo={completeTodo}
+        updateTodo={updateTodo}
+        sortField={sortField}
+        setSortField={setSortField}
+        sortDirection={sortDirection}
+        setSortDirection={setSortDirection}
         queryString={queryString}
         setQueryString={setQueryString}
-        />
-
-      {errorMessage && (
-      <div className={styles.errorBox}>
-        <hr />
-        <p>{errorMessage}</p>
-        <button onClick={() => dispatch({ type: todoActions.clearError })}>Dismiss</button>
-      </div>
-    )}
+      />
     </div>
   </div>
-  );
+);
 }
 
 export default App
