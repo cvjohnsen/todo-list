@@ -1,7 +1,7 @@
 import "./App.css";
 import styles from "./App.module.css";
 import { useCallback, useEffect, useReducer, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Routes, Route } from "react-router-dom";
 import Header from "./shared/Header";
 import TodosPage from "./pages/TodosPage";
 import {
@@ -214,18 +214,29 @@ const updateTodo = async (editedTodo) => {
     <div className={styles.appInner}>
       <Header title={title} />
 
-      <TodosPage
-        todoState={todoState}
-        addTodo={addTodo}
-        completeTodo={completeTodo}
-        updateTodo={updateTodo}
-        sortField={sortField}
-        setSortField={setSortField}
-        sortDirection={sortDirection}
-        setSortDirection={setSortDirection}
-        queryString={queryString}
-        setQueryString={setQueryString}
-      />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <TodosPage
+              todoState={todoState}
+              addTodo={addTodo}
+              completeTodo={completeTodo}
+              updateTodo={updateTodo}
+              sortField={sortField}
+              setSortField={setSortField}
+              sortDirection={sortDirection}
+              setSortDirection={setSortDirection}
+              queryString={queryString}
+              setQueryString={setQueryString}
+            />
+          }
+        />
+
+        <Route path="/about" element={<h1>About</h1>} />
+
+        <Route path="*" element={<h1>Not Found</h1>} />
+      </Routes>
     </div>
   </div>
 );
