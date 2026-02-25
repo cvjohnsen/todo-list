@@ -1,6 +1,8 @@
 import "./App.css";
 import styles from "./App.module.css";
 import { useCallback, useEffect, useReducer, useState } from "react";
+import { useLocation } from "react-router-dom";
+import Header from "./shared/Header";
 import TodosPage from "./pages/TodosPage";
 import {
   todosReducer as reducer,
@@ -19,6 +21,14 @@ function App() {
   const [sortField, setSortField] = useState("createdTime");
   const [sortDirection, setSortDirection] = useState("desc");
   const [queryString, setQueryString] = useState("");
+  const location = useLocation();
+  const [title, setTitle] = useState("Todo List");
+
+useEffect(() => {
+  if (location.pathname === "/") setTitle("Todo List");
+  else if (location.pathname === "/about") setTitle("About");
+  else setTitle("Not Found");
+}, [location]);
   
   const encodeUrl = useCallback(() => {
     const sortQuery = `sort[0][field]=${sortField}&sort[0][direction]=${sortDirection}`;
@@ -202,7 +212,7 @@ const updateTodo = async (editedTodo) => {
   return (
   <div className={styles.appContainer}>
     <div className={styles.appInner}>
-      <h1>My Todos</h1>
+      <Header title={title} />
 
       <TodosPage
         todoState={todoState}
