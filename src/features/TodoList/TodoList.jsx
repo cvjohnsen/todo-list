@@ -13,16 +13,32 @@ function TodoList({ todoList, onCompleteTodo, onUpdateTodo, isLoading }) {
       const indexOfFirstTodo = (currentPage - 1) * itemsPerPage;
 
       const totalPages = Math.ceil(filteredTodoList.length / itemsPerPage);
+      
+      const currentTodos = filteredTodoList.slice(
+      indexOfFirstTodo,
+      indexOfFirstTodo + itemsPerPage
+    );
+
+    function handlePreviousPage() {
+      const newPage = Math.max(currentPage - 1, 1);
+      setSearchParams({ page: newPage });
+    }
+
+    function handleNextPage() {
+      const newPage = Math.min(currentPage + 1, totalPages);
+      setSearchParams({ page: newPage });
+    }
 
     return (
-    <>
-      {isLoading ? (
-        <p>Todo list loading...</p>
-      ) : filteredTodoList.length === 0 ? (
-        <p>Add todo above to get started</p>
-      ) : (
+  <>
+    {isLoading ? (
+      <p>Todo list loading...</p>
+    ) : filteredTodoList.length === 0 ? (
+      <p>Add todo above to get started</p>
+    ) : (
+      <>
         <ul className={styles.list}>
-          {filteredTodoList.map((todo) => (
+          {currentTodos.map((todo) => (
             <TodoListItem
               key={todo.id}
               todo={todo}
@@ -31,9 +47,31 @@ function TodoList({ todoList, onCompleteTodo, onUpdateTodo, isLoading }) {
             />
           ))}
         </ul>
-      )}
-    </>
-  );
+
+        <div className={styles.paginationControls}>
+          <button
+            onClick={handlePreviousPage}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+
+          <span>
+            Page {currentPage} of {totalPages || 1}
+          </span>
+
+          <button
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
+        </div>
+      </>
+    )}
+  </>
+);
 }
 
 export default TodoList
+        
