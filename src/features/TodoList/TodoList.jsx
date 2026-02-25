@@ -1,10 +1,13 @@
 import TodoListItem from "./TodoListItem";
 import styles from './TodoList.module.css';
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 function TodoList({ todoList, onCompleteTodo, onUpdateTodo, isLoading }) {
     const filteredTodoList = todoList.filter((todo) => todo.isCompleted !== true);
      const [searchParams, setSearchParams] = useSearchParams();
+
+     const navigate = useNavigate();
 
       const itemsPerPage = 15;
 
@@ -12,7 +15,18 @@ function TodoList({ todoList, onCompleteTodo, onUpdateTodo, isLoading }) {
 
       const indexOfFirstTodo = (currentPage - 1) * itemsPerPage;
 
-      const totalPages = Math.ceil(filteredTodoList.length / itemsPerPage);
+      const totalPages = Math.max(1, Math.ceil(filteredTodoList.length / itemsPerPage));
+
+      useEffect(() => {
+  const isInvalidPage =
+    isNaN(currentPage) ||
+    currentPage < 1 ||
+    currentPage > totalPages;
+
+  if (isInvalidPage) {
+    navigate("/");
+  }
+}, [currentPage, totalPages, navigate]);
       
       const currentTodos = filteredTodoList.slice(
       indexOfFirstTodo,
@@ -57,7 +71,7 @@ function TodoList({ todoList, onCompleteTodo, onUpdateTodo, isLoading }) {
           </button>
 
           <span>
-            Page {currentPage} of {totalPages || 1}
+              Page {currentPage} of {totalPages}
           </span>
 
           <button
